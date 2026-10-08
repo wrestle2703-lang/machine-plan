@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Machine Installation Plan</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f5f6f8;--card:#fff;--tx:#1d2330;--mu:#6b7385;--bd:#dfe2e8;--ac:#2563eb;--wk:#eef0f4;--hl:#fde8e8;--td:#dbe7ff;
+--done:#2e9e5b;--prog:#e0a100;--not:#8a94a6;--del:#d64545}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14171d;--card:#1c2028;--tx:#e8eaf0;--mu:#98a0b2;--bd:#2e3441;--ac:#6b9bff;--wk:#232834;--hl:#3b2326;--td:#243456}}
+:root[data-theme="dark"]{--bg:#14171d;--card:#1c2028;--tx:#e8eaf0;--mu:#98a0b2;--bd:#2e3441;--ac:#6b9bff;--wk:#232834;--hl:#3b2326;--td:#243456}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.45 "Noto Sans Thai",system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1200px;margin:0 auto;padding:16px}
+h1{font-size:20px;margin:0 0 12px}
+.kpis{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.k{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:8px 14px;min-width:120px}
+.k b{display:block;font-size:20px}.k span{color:var(--mu);font-size:12px}
+.tabs{display:flex;gap:4px;margin-bottom:12px;flex-wrap:wrap}
+.tabs button,.btn{border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:7px 14px;border-radius:8px;cursor:pointer;font:inherit}
+.tabs button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.btn.p{background:var(--ac);color:#fff;border-color:var(--ac)}.btn.d{color:var(--del)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:12px}
+.sc{overflow-x:auto}
+table{border-collapse:collapse;width:100%}
+th,td{border-bottom:1px solid var(--bd);padding:4px 6px;text-align:left;white-space:nowrap}
+th{font-size:12px;color:var(--mu);font-weight:600}
+input,select{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:4px 6px;max-width:100%}
+input[type=number]{width:64px}.w1{width:180px}.w2{width:180px}.w3{width:130px}
+input:disabled{opacity:.5}
+.b{display:inline-block;padding:1px 8px;border-radius:99px;color:#fff;font-size:12px}
+.Done{background:var(--done)}.Inprogress{background:var(--prog)}.Notstarted{background:var(--not)}.Delayed{background:var(--del)}
+.g td,.g th{padding:0;text-align:center;font-size:10px;border:1px solid var(--bd);min-width:18px;height:22px}
+.g td.n,.g th.n{text-align:left;padding:0 8px;position:sticky;background:var(--card);font-size:12px;z-index:1;left:0;min-width:160px;max-width:160px;overflow:hidden;text-overflow:ellipsis}
+.g .n2{left:160px!important;min-width:190px!important;max-width:190px!important}
+.g .we{background:var(--wk)}.g .ho{background:var(--hl)}.g .to{outline:2px solid var(--ac);outline-offset:-2px}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(110px,1fr));gap:4px;min-width:800px}
+.cd{background:var(--bg);border:1px solid var(--bd);border-radius:8px;min-height:104px;padding:4px}
+.cd.o{opacity:.45}.cd.ho{background:var(--hl)}.cd.to{border-color:var(--ac);border-width:2px}
+.cd em{font-style:normal;font-size:12px;color:var(--mu)}
+.ch{display:block;color:#fff;border-radius:4px;padding:0 5px;margin-top:2px;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hd{font-size:12px;color:var(--mu);text-align:center}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.mu{color:var(--mu);font-size:12px}
+.lay{display:grid;grid-template-columns:170px minmax(0,1fr);gap:14px;align-items:start}
+.tabs{flex-direction:column;position:sticky;top:8px;margin:0}.tabs button{text-align:left}
+@media(max-width:700px){.lay{grid-template-columns:1fr}.tabs{flex-direction:row;position:static}}
+a.btn{text-decoration:none;display:inline-block}
+.fm{display:grid;gap:10px}.fm label{display:grid;gap:3px;font-size:12px;color:var(--mu)}.fm input,.fm select{width:100%;font-size:14px;color:var(--tx)}
+</style>
+</head>
+<body>
+<main>
+<h1>📋 Machine Installation Plan</h1>
+<div class="kpis" id="kp"></div>
+<div class="lay"><nav class="tabs" id="tb"></nav><div id="v"></div></div>
+<p class="mu">ข้อมูลถูกบันทึกอัตโนมัติในเบราว์เซอร์นี้ · วันสิ้นสุดคำนวณจากวันเริ่มงาน + จำนวนวันทำงาน โดยข้ามเสาร์-อาทิตย์และวันหยุด</p>
+</main>
+<script>
+const DAY=864e5,KEY="mip_v2";
+const DEF=()=>({start:"2026-09-21",ref:"2026-10-03",hol:[{d:"2026-10-13",n:"Bhumibol Memorial Day"},{d:"2026-10-23",n:"Chulalongkorn Day"}],
+tasks:[]});
+let S;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+if(!S||!S.tasks)S=DEF();
+let pend=null,flash="",tab="tasks",cm=(S.tasks.map(t=>t.ps).filter(Boolean).sort()[0]||S.ref).slice(0,7);
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const D=s=>{const[a,b,c]=s.split("-");return Date.UTC(+a,b-1,+c)};
+const iso=t=>new Date(t).toISOString().slice(0,10);
+const fmt=t=>new Date(t).toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric",timeZone:"UTC"});
+const uniq=k=>[...new Set(S.tasks.map(t=>t[k]).filter(Boolean))];
+const dls=()=>["id","mc","act","ow"].map(k=>`<datalist id="dl_${k}">${uniq(k).map(x=>`<option value="${String(x).replace(/&/g,"&amp;").replace(/"/g,"&quot;")}">`).join("")}</datalist>`).join("");
+const esc=s=>String(s??"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
+const hol=t=>S.hol.find(h=>h.d&&D(h.d)===t);
+const isW=t=>{const w=new Date(t).getUTCDay();return w&&w<6&&!hol(t)};
+const nw=t=>{while(!isW(t))t+=DAY;return t};
+const COL={Done:"var(--done)","In progress":"var(--prog)","Not started":"var(--not)",Delayed:"var(--del)"};
+function calc(){
+ const m=new Map(),r=D(S.ref);
+ S.tasks.forEach(t=>{
+  const s=nw(D(t.ps||S.start));let e=s,n=Math.max(1,+t.dur||1)-1;
+  while(n>0){e+=DAY;if(isW(e))n--}
+  m.set(t,{s,e,st:t.pct>=1?"Done":e<r?"Delayed":t.pct>0?"In progress":"Not started"});
+ });
+ return m;
+}
+const TABS={tasks:"ตารางงาน",gantt:"Plan detail",cal:"ปฏิทินรายเดือน",set:"ตั้งค่า / วันหยุด"};
+const TB=a=>Object.entries(TABS).map(([k,l])=>`<button class="${a&&k==tab?"on":""}" data-tab="${k}">${l}</button>`).join("");
+function render(){
+ const m=calc(),ts=S.tasks;
+ const rt=route();if(rt){kp.innerHTML="";tb.innerHTML=TB(false);v.innerHTML=vForm(rt.i);return}
+ const tot=ts.reduce((a,t)=>a+(+t.dur||0),0)||1;
+ const prog=ts.reduce((a,t)=>a+(+t.dur||0)*(+t.pct||0),0)/tot;
+ const ends=ts.map(t=>m.get(t).e).filter(Boolean),end=ends.length?Math.max(...ends):null;
+ const cnt=k=>ts.filter(t=>m.get(t).st===k).length;
+ kp.innerHTML=`<div class="k"><b>${(prog*100).toFixed(0)}%</b><span>ความคืบหน้ารวม</span></div><div class="k"><b>${end?fmt(end):"-"}</b><span>วันสิ้นสุดแผน</span></div>`+
+  Object.keys(COL).map(k=>`<div class="k"><b style="color:${COL[k]}">${cnt(k)}</b><span>${k}</span></div>`).join("");
+ tb.innerHTML=TB(true);
+ v.innerHTML={tasks:vTasks,gantt:vGantt,cal:vCal,set:vSet}[tab](m);
+}
+function vTasks(m){
+ const ids=S.tasks.map(t=>t.id);
+ const mcs=[...new Set(S.tasks.map(t=>t.mc))];
+ return `<div class="row"><a class="btn p" href="#/new">＋ เพิ่มงาน</a><span class="mu">แก้ไขแล้วกดออกจากช่อง (หรือ Enter) เพื่ออัปเดต</span></div>
+ 
+ ${flash?`<p style="color:var(--del)">${flash}</p>`:""}<div class="card sc"><table><tr><th>Line name</th><th>Machine</th><th>Activity</th><th>Owner</th><th>วันเริ่มงาน</th><th>Start</th><th>วันทำงาน</th><th>End</th><th>% เสร็จ</th><th>Status</th><th></th></tr>
+ ${S.tasks.length?"":`<tr><td colspan="11" class="mu" style="padding:18px">ยังไม่มีงาน กด "＋ เพิ่มงาน" เพื่อเริ่มต้น</td></tr>`}${S.tasks.map((t,i)=>{const c=m.get(t)||{};return `<tr data-i="${i}">
+ <td><input class="w1" data-k="id" value="${esc(t.id)}"></td>
+ <td><input class="w2" data-k="mc" value="${esc(t.mc)}"></td>
+ <td><input class="w2" data-k="act" value="${esc(t.act)}"></td>
+ <td><input class="w3" data-k="ow" value="${esc(t.ow)}"></td>
+ <td><input type="date" data-k="ps" value="${esc(t.ps)}" ></td>
+ <td>${c.s?fmt(c.s):"-"}</td>
+ <td><input type="number" min="1" data-k="dur" value="${esc(t.dur)}"></td>
+ <td>${c.e?fmt(c.e):"-"}</td>
+ <td><input type="number" min="0" max="100" data-k="pct" value="${Math.round((t.pct||0)*100)}"></td>
+ <td>${c.st?`<span class="b ${c.st.replace(" ","")}">${c.st}</span>`:"-"}</td>
+ <td><a class="btn" href="#/edit/${i}" title="แก้ไขในหน้าฟอร์ม">✎</a> <button class="btn d" data-del="${i}" title="ลบ">${pend=="d"+i?"ยืนยันลบ?":"✕"}</button></td></tr>`}).join("")}</table></div>`;
+}
+function vGantt(m){
+ const st=nw0(D(S.start)),days=[...Array(63)].map((_,i)=>st+i*DAY),r=D(S.ref);
+ const cls=t=>(new Date(t).getUTCDay()%6==0?" we":"")+(hol(t)?" ho":"")+(t==r?" to":"");
+ return `<div class="card sc"><table class="g"><tr><th class="n">Line name</th><th class="n n2">Activity</th>${days.map(t=>{const d=new Date(t);return `<th class="${cls(t)}" title="${fmt(t)}">${d.getUTCDate()==1||t==st?["J","F","M","A","M","J","J","A","S","O","N","D"][d.getUTCMonth()]+"<br>":""}${d.getUTCDate()}</th>`}).join("")}</tr>
+ ${S.tasks.map(t=>{const c=m.get(t)||{};return `<tr><td class="n">${esc(t.id)}</td><td class="n n2" title="${esc(t.act)}">${esc(t.act)}</td>${days.map(d=>{const on=c.s&&d>=c.s&&d<=c.e&&isW(d);return `<td class="${cls(d)}" ${on?`style="background:${COL[c.st]}"`:""}></td>`}).join("")}</tr>`}).join("")}</table></div>
+ <p class="mu">เริ่มต้นที่วันจันทร์ของสัปดาห์โปรเจกต์ · แสดง 9 สัปดาห์ · กรอบน้ำเงิน = วันอ้างอิง (วันนี้) · แดงอ่อน = วันหยุด</p>`;
+}
+function nw0(t){return t-((new Date(t).getUTCDay()+6)%7)*DAY}
+function vCal(m){
+ const[y,mo]=cm.split("-").map(Number),first=Date.UTC(y,mo-1,1),st=nw0(first),r=D(S.ref);
+ let h=`<div class="row"><button class="btn" data-mo="-1">◀</button><input type="month" id="mp" value="${cm}"><button class="btn" data-mo="1">▶</button><b>${new Date(first).toLocaleDateString("en-GB",{month:"long",year:"numeric",timeZone:"UTC"})}</b><span class="mu">เส้นประ = ยังไม่เริ่ม · เขียว = เสร็จ · เหลือง = กำลังทำ · แดง = ล่าช้า</span></div><div class="sc"><div class="cal">`;
+ ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].forEach(d=>h+=`<div class="hd">${d}</div>`);
+ for(let i=0;i<42;i++){
+  const t=st+i*DAY,dd=new Date(t),ho=hol(t);
+  const act=isW(t)?S.tasks.filter(k=>{const c=m.get(k);return c&&c.s&&t>=c.s&&t<=c.e}):[];
+  h+=`<div class="cd${dd.getUTCMonth()!=mo-1?" o":""}${ho?" ho":""}${t==r?" to":""}"><em>${dd.getUTCDate()}${ho?" · "+esc(ho.n):""}</em>`+
+   act.map(k=>`<span class="ch" style="${m.get(k).st=="Not started"?"background:transparent;color:var(--tx);border:1px dashed var(--not)":"background:"+COL[m.get(k).st]}" title="${esc(k.id+" "+k.act)}">${esc(k.id)} ${esc(k.act)}</span>`).join("")+`</div>`;
+ }
+ return h+"</div></div>";
+}
+function route(){const h=location.hash;if(h=="#/new")return{i:-1};const x=h.match(/^#\/edit\/(\d+)$/);return x&&S.tasks[+x[1]]?{i:+x[1]}:null}
+function vForm(i){
+ let nid=S.tasks.length+1;while(S.tasks.some(x=>x.id=="NEW-"+nid))nid++;
+ const t=i<0?{id:"NEW-"+nid,mc:S.tasks.length?S.tasks[S.tasks.length-1].mc:"",act:"",ow:"",pre:"",ps:S.start,dur:1,pct:0}:S.tasks[i];
+ const ids=[...new Set(S.tasks.filter((_,j)=>j!==i).map(x=>x.id))],mcs=[...new Set(S.tasks.map(x=>x.mc))];
+ return `<div class="card" style="max-width:560px"><h2 style="margin-top:0">${i<0?"เพิ่มงานใหม่":"แก้ไขงาน "+esc(t.id)}</h2>
+ ${dls()}
+ <div class="fm">
+ <label>Line name *<input id="f_id" list="dl_id" value="${esc(t.id)}" placeholder="เช่น CNC-7"></label>
+ <label>Machine<input id="f_mc" list="dl_mc" value="${esc(t.mc)}"></label>
+ <label>Activity<input id="f_act" list="dl_act" value="${esc(t.act)}"></label>
+ <label>Owner<input id="f_ow" list="dl_ow" value="${esc(t.ow)}"></label>
+ <label>วันเริ่มงาน<input type="date" id="f_ps" value="${esc(t.ps)}" ></label>
+ <label>ระยะเวลา (วันทำงาน)<input type="number" min="1" id="f_dur" value="${esc(t.dur)}"></label>
+ <label>% เสร็จ (0-100)<input type="number" min="0" max="100" id="f_pct" value="${Math.round((t.pct||0)*100)}"></label>
+ </div><div id="f_err" style="color:var(--del);margin-top:10px"></div><div class="row" style="margin:10px 0 0"><button class="btn p" data-save>บันทึก</button><a class="btn" href="#">ยกเลิก</a></div></div>`;
+}
+function vSet(){
+ return `<div class="card"><div class="row"><label>วันเริ่มโปรเจกต์ <input type="date" data-s="start" value="${S.start}"></label>
+ <label>วันอ้างอิง (วันนี้) <input type="date" data-s="ref" value="${S.ref}"></label><button class="btn" data-today>ใช้วันนี้จริง</button></div>
+ <h3>วันหยุด (ไม่นับเป็นวันทำงาน)</h3>
+ <table>${S.hol.map((h,i)=>`<tr><td><input type="date" data-h="${i}" data-k="d" value="${h.d}"></td><td><input class="w2" data-h="${i}" data-k="n" value="${esc(h.n)}"></td><td><button class="btn d" data-delh="${i}">✕</button></td></tr>`).join("")}</table>
+ <div class="row" style="margin-top:10px"><button class="btn" data-addh>＋ เพิ่มวันหยุด</button><button class="btn d" data-reset>${pend=="r"?"กดอีกครั้งเพื่อยืนยันการลบทั้งหมด":"ลบงานทั้งหมด / รีเซ็ต"}</button></div></div>`;
+}
+document.addEventListener("click",e=>{
+ const b=e.target.closest("button");if(!b)return;const d=b.dataset;const was=pend;pend=null;flash="";
+ if(d.tab){tab=d.tab;if(location.hash)location.hash=""}
+ else if("add" in d){const n=S.tasks.length+1;S.tasks.push({id:"NEW-"+n,mc:S.tasks.length?S.tasks[S.tasks.length-1].mc:"Machine",act:"New activity",ow:"",pre:"",ps:S.start,dur:1,pct:0})}
+ else if(d.del!=null){if(was!="d"+d.del){pend="d"+d.del;render();return}const id=S.tasks[d.del].id;S.tasks.splice(d.del,1);S.tasks.forEach(t=>{if(t.pre==id)t.pre=""})}
+ else if(d.mo){const[y,m]=cm.split("-").map(Number),n=new Date(Date.UTC(y,m-1+ +d.mo,1));cm=iso(n).slice(0,7)}
+ else if("today" in d)S.ref=iso(Date.now());
+ else if("addh" in d)S.hol.push({d:S.ref,n:"Holiday"});
+ else if(d.delh!=null)S.hol.splice(d.delh,1);
+ else if("reset" in d){if(was!="r"){pend="r";render();return}S=DEF()}
+ else if("save" in d){
+  const g=x=>document.getElementById("f_"+x).value,r=route(),id=g("id").trim();
+  if(!id){const er=document.getElementById("f_err");er.textContent="กรุณากรอก Line name";document.getElementById("f_id").focus();return}
+  const n={id,mc:g("mc"),act:g("act"),ow:g("ow"),ps:g("ps"),dur:Math.max(1,parseInt(g("dur"))||1),pct:Math.min(100,Math.max(0,parseFloat(g("pct"))||0))/100};
+  if(r.i<0)S.tasks.push(n);else{const old=S.tasks[r.i].id;S.tasks.forEach(x=>{if(x.pre==old)x.pre=id});S.tasks[r.i]=n}
+  cm=(n.ps||S.start).slice(0,7);location.hash="";
+ }
+ else return;
+ save();render();
+});
+document.addEventListener("change",e=>{
+ const el=e.target,k=el.dataset.k;
+ if(el.id=="mp"){cm=el.value||cm}
+ else if(el.dataset.s){S[el.dataset.s]=el.value||S[el.dataset.s]}
+ else if(el.dataset.h!=null){S.hol[el.dataset.h][k]=el.value}
+ else if(k){
+  const row=el.closest("tr"),t=S.tasks[row.dataset.i];let val=el.value;
+  if(k=="id"){val=val.trim();if(!val){flash="Line name ต้องไม่ว่าง";render();return}
+   S.tasks.forEach(x=>{if(x.pre==t.id)x.pre=val})}
+  if(k=="dur")val=Math.max(1,parseInt(val)||1);
+  if(k=="pct")val=Math.min(100,Math.max(0,parseFloat(val)||0))/100;
+  t[k]=val;if(k=="ps"&&val)cm=val.slice(0,7);
+ } else return;
+ save();render();
+});
+window.addEventListener("hashchange",render);
+render();
+</script>
+</body>
+</html>
